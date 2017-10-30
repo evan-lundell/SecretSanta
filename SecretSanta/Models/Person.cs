@@ -14,11 +14,15 @@ namespace SecretSanta.Models
 
         public ICollection<PersonGroup> Groups { get; set; }
         public ICollection<PersonExceptionGroup> Exceptions { get; set; }
+        public ICollection<GiftPair> GiverPairs { get; set; }
+        public ICollection<GiftPair> RecipientPairs { get; set; }
 
         public Person()
         {
             Groups = new Collection<PersonGroup>();
             Exceptions = new Collection<PersonExceptionGroup>();
+            GiverPairs = new Collection<GiftPair>();
+            RecipientPairs = new Collection<GiftPair>();
         }
     }
 }

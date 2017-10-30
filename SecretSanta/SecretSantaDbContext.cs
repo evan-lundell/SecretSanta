@@ -16,6 +16,9 @@ namespace SecretSanta
 
         public DbSet<Person> Persons { get; set; }
         public DbSet<Group> Groups { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<ExceptionGroup> ExceptionGroups { get; set; }
+        public DbSet<GiftPair> GiftPairs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,13 +41,8 @@ namespace SecretSanta
                 .ToTable("Group");
             modelBuilder.Entity<Group>()
                 .Property(g => g.Name)
+                .IsRequired()
                 .HasMaxLength(255);
-            modelBuilder.Entity<Group>()
-                .Property(g => g.LeaderName)
-                .HasMaxLength(100);
-            modelBuilder.Entity<Group>()
-                .Property(g => g.LeaderEmail)
-                .HasMaxLength(50);
 
             modelBuilder.Entity<PersonGroup>()
                 .ToTable("PersonGroup")
@@ -58,6 +56,34 @@ namespace SecretSanta
 
             modelBuilder.Entity<PersonExceptionGroup>()
                 .ToTable("PersonExceptionGroup");
+
+            modelBuilder.Entity<Event>()
+                .ToTable("Event");
+            modelBuilder.Entity<Event>()
+                .Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(255);
+            modelBuilder.Entity<Event>()
+                .Property(e => e.LeaderName)
+                .IsRequired()
+                .HasMaxLength(100);
+            modelBuilder.Entity<Event>()
+                .Property(e => e.LeaderEmail)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<GiftPair>()
+                .ToTable("GiftPair");
+            modelBuilder.Entity<GiftPair>()
+                .HasOne(gp => gp.Giver)
+                .WithMany(p => p.GiverPairs)
+                .HasForeignKey(gp => gp.GiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<GiftPair>()
+                .HasOne(gp => gp.Recipient)
+                .WithMany(p => p.RecipientPairs)
+                .HasForeignKey(gp => gp.RecipientId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

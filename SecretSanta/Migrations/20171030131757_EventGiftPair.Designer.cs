@@ -11,9 +11,10 @@ using System;
 namespace SecretSanta.Migrations
 {
     [DbContext(typeof(SecretSantaDbContext))]
-    partial class SecretSantaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171030131757_EventGiftPair")]
+    partial class EventGiftPair
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,9 +38,7 @@ namespace SecretSanta.Migrations
                         .IsRequired()
                         .HasMaxLength(100);
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255);
+                    b.Property<string>("Name");
 
                     b.HasKey("Id");
 
@@ -80,11 +79,23 @@ namespace SecretSanta.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.HasIndex("GiverId");
-
-                    b.HasIndex("RecipientId");
-
                     b.ToTable("GiftPair");
+                });
+
+            modelBuilder.Entity("SecretSanta.Models.Giver", b =>
+                {
+                    b.Property<int>("GiftPairId");
+
+                    b.Property<int>("PersonId");
+
+                    b.HasKey("GiftPairId", "PersonId");
+
+                    b.HasIndex("GiftPairId")
+                        .IsUnique();
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("Giver");
                 });
 
             modelBuilder.Entity("SecretSanta.Models.Group", b =>
@@ -154,6 +165,22 @@ namespace SecretSanta.Migrations
                     b.ToTable("PersonGroup");
                 });
 
+            modelBuilder.Entity("SecretSanta.Models.Recipient", b =>
+                {
+                    b.Property<int>("GiftPairId");
+
+                    b.Property<int>("PersonId");
+
+                    b.HasKey("GiftPairId", "PersonId");
+
+                    b.HasIndex("GiftPairId")
+                        .IsUnique();
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("Recipient");
+                });
+
             modelBuilder.Entity("SecretSanta.Models.Event", b =>
                 {
                     b.HasOne("SecretSanta.Models.Group", "Group")
@@ -165,7 +192,7 @@ namespace SecretSanta.Migrations
             modelBuilder.Entity("SecretSanta.Models.ExceptionGroup", b =>
                 {
                     b.HasOne("SecretSanta.Models.Group", "Group")
-                        .WithMany("ExceptionGroups")
+                        .WithMany()
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -176,16 +203,19 @@ namespace SecretSanta.Migrations
                         .WithMany("GiftPairs")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
 
-                    b.HasOne("SecretSanta.Models.Person", "Giver")
-                        .WithMany("GiverPairs")
-                        .HasForeignKey("GiverId")
-                        .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity("SecretSanta.Models.Giver", b =>
+                {
+                    b.HasOne("SecretSanta.Models.GiftPair", "GiftPair")
+                        .WithOne("Giver")
+                        .HasForeignKey("SecretSanta.Models.Giver", "GiftPairId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("SecretSanta.Models.Person", "Recipient")
-                        .WithMany("RecipientPairs")
-                        .HasForeignKey("RecipientId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("SecretSanta.Models.Person", "Person")
+                        .WithMany("Givers")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("SecretSanta.Models.PersonExceptionGroup", b =>
@@ -209,6 +239,19 @@ namespace SecretSanta.Migrations
 
                     b.HasOne("SecretSanta.Models.Person", "Person")
                         .WithMany("Groups")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("SecretSanta.Models.Recipient", b =>
+                {
+                    b.HasOne("SecretSanta.Models.GiftPair", "GiftPair")
+                        .WithOne("Recipient")
+                        .HasForeignKey("SecretSanta.Models.Recipient", "GiftPairId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("SecretSanta.Models.Person", "Person")
+                        .WithMany("Recipients")
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

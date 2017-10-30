@@ -9,14 +9,16 @@ namespace SecretSanta.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string LeaderName { get; set; }
-        public string LeaderEmail { get; set; }
 
         public ICollection<PersonGroup> PersonGroups { get; set; }
+        public ICollection<Event> Events { get; set; }
+        public ICollection<ExceptionGroup> ExceptionGroups { get; set; }
 
         public Group()
         {
             PersonGroups = new Collection<PersonGroup>();
+            Events = new Collection<Event>();
+            ExceptionGroups = new Collection<ExceptionGroup>();
         }
     }
 }

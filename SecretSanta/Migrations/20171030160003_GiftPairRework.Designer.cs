@@ -11,9 +11,10 @@ using System;
 namespace SecretSanta.Migrations
 {
     [DbContext(typeof(SecretSantaDbContext))]
-    partial class SecretSantaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171030160003_GiftPairRework")]
+    partial class GiftPairRework
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
