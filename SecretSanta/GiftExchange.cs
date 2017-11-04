@@ -64,7 +64,7 @@ namespace SecretSanta
         {
             if (groupEvent == null)
             {
-                throw new Exception("An Event has been initialize yet. Either load an existing event or create a new one.");
+                throw new Exception("An Event has not been initialize yet. Either load an existing event or create a new one.");
             }
 
             groupEvent.GiftPairs.Clear();
@@ -104,12 +104,96 @@ namespace SecretSanta
 
         public void EmailGiftPairs()
         {
+            if (groupEvent == null)
+            {
+                throw new Exception("An Event has not been initialize yet. Either load an existing event or create a new one.");
+            }
 
+            foreach (GiftPair gp in groupEvent.GiftPairs)
+            {
+                var fromAddress = new MailAddress("evanpop3test@gmail.com", "Secret Santa");
+                var fromPassword = "Control#1";
+                var toAddress = new MailAddress(gp.Giver.Email);
+                string subject = $"{groupEvent.Name} info for {gp.Giver.FirstName}";
+                string body = $"<html><body><p>{gp.Giver.FirstName},</p><p><h1>You have {gp.Recipient.FirstName}!</h1></p><p>The wish list can be found here: https://docs.google.com/spreadsheets/d/11QSdf0OWxW2Ax2tGYnwm5eSDylRRvrkwrBw_0TSRdOk/edit</p>";
+                body += "<p>If you notice an issue with this drawing (ex. you have yourself or a member of your immediate family), please let Evan know. Do not reply to this email, text or call Evan/Karla.</p><p>Thanks!</p></body></html>";
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                };
+                using (var message = new MailMessage(fromAddress, toAddress))
+                {
+                    message.Subject = subject;
+                    message.Body = body;
+                    message.IsBodyHtml = true;
+                    smtp.Send(message);
+                }
+            }
         }
 
         public void EmailEventLeader()
         {
+            if (groupEvent == null)
+            {
+                throw new Exception("An Event has not been initialize yet. Either load an existing event or create a new one.");
+            }
 
+            StringBuilder builder = new StringBuilder(@"<html><head><style>#gifts {
+    font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#gifts td, #gifts th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#gifts tr:nth-child(even){background-color: #f2f2f2;}
+
+#gifts tr:hover {background-color: #ddd;}
+
+#gifts th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}</style></head>");
+            builder.Append("<body><table id='gifts'><tr><th>Gift Giver</th><th>Give Recipient</th></tr>");
+            foreach (GiftPair gp in groupEvent.GiftPairs)
+            {
+                builder.AppendLine($"<tr><td>{gp.Giver.FirstName}</td><td>{gp.Recipient.FirstName}</td></tr>");
+            }
+            builder.AppendLine("</table></div></body></html>");
+
+            var fromAddress = new MailAddress("evanpop3test@gmail.com", "Secret Santa");
+            var fromPassword = "Control#1";
+            var toAddress = new MailAddress(groupEvent.LeaderEmail);
+            string subject = $"{groupEvent.Name} Master List";
+            string body = builder.ToString();
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+            };
+            using (var message = new MailMessage(fromAddress, toAddress))
+            {
+                message.Subject = subject;
+                message.Body = body;
+                message.IsBodyHtml = true;
+                smtp.Send(message);
+            }
         }
 
         private bool IsAllowedGiftPair(Person giver, Person recipient)

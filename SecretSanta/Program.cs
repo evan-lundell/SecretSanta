@@ -12,8 +12,9 @@ namespace SecretSanta
                 GiftExchange ge = new GiftExchange(context);
                 ge.Initialize("Houk Family Christmas");
                 ge.LoadExistingEvent("2017 Christmas Gift Exchange");
-                ge.GenerateGiftPairs();
-                ge.EmailEventLeader();
+                //ge.GenerateGiftPairs();
+                ge.EmailGiftPairs();
+                //ge.EmailEventLeader();
 
             }
             catch (Exception ex)
