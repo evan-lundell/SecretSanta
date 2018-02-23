@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using SecretSanta.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SecretSanta
 {

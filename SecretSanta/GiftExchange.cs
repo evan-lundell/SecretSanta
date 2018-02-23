@@ -207,5 +207,21 @@ namespace SecretSanta
             }
             return true;
         }
+
+        public string PrintGiftPairs()
+        {
+            if (groupEvent == null)
+            {
+                throw new Exception("An Event has not been initialize yet. Either load an existing event or create a new one.");
+            }
+
+            StringBuilder builder = new StringBuilder();
+            foreach (GiftPair groupPair in groupEvent.GiftPairs)
+            {
+                builder.AppendLine($"{groupPair.Giver.FirstName} -> {groupPair.Recipient.FirstName}");
+            }
+
+            return builder.ToString();
+        }
     }
 }
