@@ -166,7 +166,7 @@ namespace SecretSanta
     background-color: #4CAF50;
     color: white;
 }</style></head>");
-            builder.Append("<body><table id='gifts'><tr><th>Gift Giver</th><th>Give Recipient</th></tr>");
+            builder.Append("<body><table id='gifts'><tr><th>Gift Giver</th><th>Gift Recipient</th></tr>");
             foreach (GiftPair gp in groupEvent.GiftPairs)
             {
                 builder.AppendLine($"<tr><td>{gp.Giver.FirstName}</td><td>{gp.Recipient.FirstName}</td></tr>");
